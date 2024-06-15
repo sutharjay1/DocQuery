@@ -1,10 +1,18 @@
 import Link from 'next/link';
 import MaxWidthWrapper from './MaxWidthWrapper';
 import { Button, buttonVariants } from './ui/button';
-import { LoginLink, RegisterLink } from '@kinde-oss/kinde-auth-nextjs/server';
+import {
+	getKindeServerSession,
+	LoginLink,
+	LogoutLink,
+	RegisterLink,
+} from '@kinde-oss/kinde-auth-nextjs/server';
 import { ArrowRight } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const Navbar = () => {
+	const { getUser } = getKindeServerSession();
+	const user = getUser();
 	return (
 		<>
 			<nav className="sticky h-14 inset-0 top-0 z-30 w-full border-b border-zinc-100 bg-white/75 backdrop-blur-lg transition-all">
@@ -19,43 +27,61 @@ const Navbar = () => {
 						{/* TODO: add mobile navbar */}
 
 						<div className=" hidden items-center justify-center space-x-4 sm:flex">
-							<>
-								<Link
-									href={'/dashboard'}
-									className={buttonVariants({
-										variant: 'ghost',
-										size: 'sm',
-									})}
-								>
-									Dashboard
-								</Link>
-								<Link
-									href={'/pricing'}
-									className={buttonVariants({
-										variant: 'ghost',
-										size: 'sm',
-									})}
-								>
-									Pricing
-								</Link>
-								<LoginLink>
-									<Button
-										variant="ghost"
-										size={'sm'}
+							{!user ? (
+								<>
+									<Link
+										href={'/dashboard'}
+										className={buttonVariants({
+											variant: 'ghost',
+											size: 'sm',
+										})}
 									>
-										Sign In
-									</Button>
-								</LoginLink>
-								<RegisterLink>
-									<Button
-										variant="default"
-										size={'sm'}
+										Dashboard
+									</Link>
+									<Link
+										href={'/pricing'}
+										className={buttonVariants({
+											variant: 'ghost',
+											size: 'sm',
+										})}
 									>
-										Get Started{' '}
-										<ArrowRight className="w-5 h-5 ml-2" />
-									</Button>
-								</RegisterLink>
-							</>
+										Pricing
+									</Link>
+									<LoginLink>
+										<Button
+											variant="ghost"
+											size={'sm'}
+										>
+											Sign In
+										</Button>
+									</LoginLink>
+
+									<RegisterLink>
+										<Button
+											variant="default"
+											size={'sm'}
+										>
+											Get Started{' '}
+											<ArrowRight className="w-5 h-5 ml-2" />
+										</Button>
+									</RegisterLink>
+								</>
+							) : (
+								<>
+									<LogoutLink>
+										<Button
+											variant="ghost"
+											size={'sm'}
+										>
+											Sign Out
+										</Button>
+									</LogoutLink>
+									<Avatar>
+										<AvatarImage src={user.image} />
+										<AvatarFallback>{user.given_name}</AvatarFallback>
+									</Avatar>
+								</>
+							)}
 						</div>
 					</div>
 				</MaxWidthWrapper>
