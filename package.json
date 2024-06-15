@@ -7,7 +7,7 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"upload": "git add . && sh -c 'read -p \"Enter commit message: \" message && git commit -m \"$message\" && git push origin main'"
+		"upload": "sh upload.sh"
 	},
 	"dependencies": {
 		"@radix-ui/react-slot": "^1.0.2",
