@@ -65,13 +65,13 @@ export default function Home() {
 						<div>
 							<div className="mx-auto max-w-6xl px-6 lg:px-8">
 								<div className="mt-16 flow-root sm:mt-24">
-									<div className="-m-2 rounded-xl bg-zinc-900/5 p-2 ring-1 ring-inset ring-zinc-900/10 lg:-m-4 lg:rounded-2xl lg:p-4	">
+									<div className="-m-2 rounded-xl bg-zinc-900/5 p-2 ring-1 ring-inset ring-zinc-900/10 lg:-m-4 lg:rounded-2xl lg:p-3	">
 										<Image
 											src="/dashboard-preview.jpg"
 											alt="product preview"
 											width={1364}
 											height={866}
-											className="rounded-xl ring-1 ring-zinc-900/10 ring-inset  shadow-2xl"
+											className="rounded-xl bg-white p-2 sm:p-8 md:p-20 shadow-2xl ring-1 ring-zinc-900/10"
 											draggable="false"
 											quality={100}
 											priority
@@ -115,7 +115,7 @@ export default function Home() {
 					<ol className="my-8 space-y-4 pt-8 md:flex md:space-x-12 md:space-y-0">
 						<li className="md:flex-1">
 							<div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
-								<span className="text-sm font-medium text-blue-600">
+								<span className="text-sm font-medium text-blue-500">
 									Step 1
 								</span>
 								<span className="text-xl font-semibold ">
@@ -123,16 +123,64 @@ export default function Home() {
 								</span>
 								<span className="mt-2 font-medium text-zinc-700">
 									Start for free, or elevate with DocQuery's{' '}
-									<Link
-										href={'/pricing'}
-										className="text-blue-700 underline underline-offset-2"
-									>
-										Pro Plan
+									<Link href={'/pricing'}>
+										<Button
+											variant={'link'}
+											aria-label="View pricing"
+											className="text-blue-700 underline underline-offset-2 px-0"
+										>
+											Pro Plan
+										</Button>
 									</Link>
 								</span>
 							</div>
 						</li>
+						<li className="md:flex-1">
+							<div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
+								<span className="text-sm font-medium text-blue-500">
+									Step 2
+								</span>
+								<span className="text-xl font-semibold ">
+									Upload your PDF file
+								</span>
+								<span className="mt-2 font-medium text-zinc-700">
+									We&apos;ll process your file and make it
+									ready for you to chat with
+								</span>
+							</div>
+						</li>
+						<li className="md:flex-1">
+							<div className="flex flex-col space-y-2 border-l-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pb-0 md:pl-0 md:pt-4">
+								<span className="text-sm font-medium text-blue-500">
+									Step 3
+								</span>
+								<span className="text-xl font-semibold ">
+									Start asking questions
+								</span>
+								<span className="mt-2 font-medium text-zinc-700">
+									It&apos;s that simple. Try out DocQuery
+									today - it takes less than a minute.
+								</span>
+							</div>
+						</li>
 					</ol>
+
+					<div className="mx-auto max-w-6xl px-6 lg:px-8">
+						<div className="mt-16 flow-root sm:mt-24">
+							<div className="-m-2 rounded-xl bg-zinc-900/5 p-2 ring-1 ring-inset ring-zinc-900/10 lg:-m-4 lg:rounded-2xl lg:p-3	">
+								<Image
+									src="/file-upload-preview.jpg"
+									alt="uploading preview"
+									width={1419}
+									height={732}
+									className="rounded-xl bg-white p-2 sm:p-8 md:p-20 shadow-2xl ring-1 ring-zinc-900/10"
+									draggable="false"
+									quality={100}
+									priority
+								/>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				{/* Feature Section */}
