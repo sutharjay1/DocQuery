@@ -1,6 +1,6 @@
 import { trpc } from '@/app/_trpc/client';
 import { db } from '@/app/db';
-import ChatWrapper from '@/components/ChatWrapper';
+import ChatWrapper from '@/components/chat/ChatWrapper';
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 import PDFRenderer from '@/components/PDFRenderer';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
@@ -47,9 +47,10 @@ const page = async ({ params }: PageProps) => {
 					</div>
 					{/* right */}
 					<div className="shrink-0 flex-[0.75] border-t border-zinc-200 lg:w-96 lg:border-l lg:border-t-0">
-						<div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">
-							<ChatWrapper />
-						</div>
+						{/* <div className="flex flex-1 flex-col px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6"> */}
+						{/* <div className="shrink-0 flex-[0.75] border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0"> */}
+						<ChatWrapper fileId={file.id} />
+						{/* </div> */}
 					</div>
 				</div>
 			</div>
