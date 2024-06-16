@@ -14,10 +14,27 @@ import { cn } from '@/lib/utils';
 import Dropzone from 'react-dropzone';
 import { Cloud, File, Loader2 } from 'lucide-react';
 import { Progress } from './ui/progress';
+import { useUploadThing } from '@/lib/uploadthing';
+import { useToast } from './ui/use-toast';
+import { trpc } from '@/app/_trpc/client';
+import { useRouter } from 'next/navigation';
 
 const UploadDropZone = () => {
-	const [isUploading, setIsUploading] = useState<boolean>(true);
+	const { toast } = useToast();
+	const [isUploading, setIsUploading] = useState<boolean>(false);
 	const [uploadProgress, setUploadProgress] = useState<number>(0);
+
+	const { startUpload } = useUploadThing('pdfUploader');
+
+	const router = useRouter();
+
+	const { mutate: startPolling } = trpc.getFile.useMutation({
+		onSuccess: (file: any) => {
+			router.push(`/dashboard/file/${file.id}`);
+		},
+		retry: true,
+		retryDelay: 500,
+	});
 
 	const startSimulatedProgress = () => {
 		setUploadProgress(0);
@@ -37,6 +54,7 @@ const UploadDropZone = () => {
 	return (
 		<Dropzone
 			multiple={false}
+			disabled={isUploading}
 			onDrop={async (acceptedFiles) => {
 				console.log(`dropped`, acceptedFiles);
 				setIsUploading(true);
@@ -44,16 +62,40 @@ const UploadDropZone = () => {
 				const progressInterval = startSimulatedProgress();
 
 				//handle file uploading
-				await new Promise((resolve) => setTimeout(resolve, 10000));
+				const res = await startUpload(acceptedFiles);
+
+				if (!res) {
+					console.log(`res`, JSON.stringify(res));
+					return toast({
+						title: 'Something went wrong res',
+						description: 'Please try again later',
+						variant: 'destructive',
+					});
+				}
+
+				const [fileResponse] = res;
+
+				const key = fileResponse?.key;
+
+				if (!key) {
+					console.log(`key`, key);
+					return toast({
+						title: 'Something went wrong key',
+						description: 'Please try again later',
+						variant: 'destructive',
+					});
+				}
 
 				clearInterval(progressInterval);
 				setUploadProgress(100);
+
+				startPolling({ key });
 			}}
 		>
 			{({ getInputProps, getRootProps, acceptedFiles }) => (
 				<div
 					{...getRootProps()}
-					className="h-64 border mx-1 my-2 border-dashed border-zinc-300 rounded-lg"
+					className="h-64 border mx-1 my-2 border-dashed border-zinc-400 rounded-lg"
 				>
 					<div className="flex items-center justify-center w-full h-full">
 						<label
@@ -69,7 +111,12 @@ const UploadDropZone = () => {
 									PDF (Up to 4MB)
 								</p>
 							</div>
-							<input {...getInputProps()} />
+							<input
+								{...getInputProps()}
+								type="file"
+								id="dropzone-file"
+								className="hidden"
+							/>
 
 							{acceptedFiles && acceptedFiles[0] ? (
 								<div className="max-w-xs bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200">
@@ -83,12 +130,26 @@ const UploadDropZone = () => {
 							) : null}
 
 							{isUploading ? (
-								<div className="w-full mt-4 max-w-xs mx-auto">
-									<Progress
-										value={uploadProgress}
-										className="h-1 w-full bg-zinc-200"
-									/>
-								</div>
+								<>
+									<div className="w-full mt-4 max-w-xs mx-auto">
+										<Progress
+											indicatorColor={
+												uploadProgress === 100
+													? 'bg-green-500'
+													: ''
+											}
+											value={uploadProgress}
+											className="h-1 w-full bg-zinc-200"
+										/>
+									</div>
+									{uploadProgress === 100 ||
+									uploadProgress >= 90 ? (
+										<div className="flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2">
+											<Loader2 className="h-3 w-3 animate-spin" />
+											Redirecting...
+										</div>
+									) : null}
+								</>
 							) : null}
 						</label>
 					</div>
@@ -124,7 +185,7 @@ const UploadButton = ({ className }: { className?: string }) => {
 					Upload File
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="backdrop-blur-xl">
+			<DialogContent>
 				<UploadDropZone />
 			</DialogContent>
 		</Dialog>

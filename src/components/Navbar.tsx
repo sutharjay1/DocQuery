@@ -27,61 +27,59 @@ const Navbar = () => {
 						{/* TODO: add mobile navbar */}
 
 						<div className=" hidden items-center justify-center space-x-4 sm:flex">
-							{!user ? (
-								<>
-									<Link
-										href={'/dashboard'}
-										className={buttonVariants({
-											variant: 'ghost',
-											size: 'sm',
-										})}
+							<>
+								<Link
+									href={'/dashboard'}
+									className={buttonVariants({
+										variant: 'ghost',
+										size: 'sm',
+									})}
+								>
+									Dashboard
+								</Link>
+								<Link
+									href={'/pricing'}
+									className={buttonVariants({
+										variant: 'ghost',
+										size: 'sm',
+									})}
+								>
+									Pricing
+								</Link>
+								<LoginLink>
+									<Button
+										variant="ghost"
+										size={'sm'}
 									>
-										Dashboard
-									</Link>
-									<Link
-										href={'/pricing'}
-										className={buttonVariants({
-											variant: 'ghost',
-											size: 'sm',
-										})}
-									>
-										Pricing
-									</Link>
-									<LoginLink>
-										<Button
-											variant="ghost"
-											size={'sm'}
-										>
-											Sign In
-										</Button>
-									</LoginLink>
+										Sign In
+									</Button>
+								</LoginLink>
 
-									<RegisterLink>
-										<Button
-											variant="default"
-											size={'sm'}
-										>
-											Get Started{' '}
-											<ArrowRight className="w-5 h-5 ml-2" />
-										</Button>
-									</RegisterLink>
-								</>
-							) : (
-								<>
-									<LogoutLink>
-										<Button
-											variant="ghost"
-											size={'sm'}
-										>
-											Sign Out
-										</Button>
-									</LogoutLink>
-									<Avatar>
-										<AvatarImage src={user.image} />
-										<AvatarFallback>{user.given_name}</AvatarFallback>
-									</Avatar>
-								</>
-							)}
+								<RegisterLink>
+									<Button
+										variant="default"
+										size={'sm'}
+									>
+										Get Started{' '}
+										<ArrowRight className="w-5 h-5 ml-2" />
+									</Button>
+								</RegisterLink>
+
+								<LogoutLink>
+									<Button
+										variant="ghost"
+										size={'sm'}
+									>
+										Sign Out
+									</Button>
+								</LogoutLink>
+								<Avatar>
+									<AvatarImage src={user.image} />
+									<AvatarFallback>
+										{user.given_name}
+									</AvatarFallback>
+								</Avatar>
+							</>
 						</div>
 					</div>
 				</MaxWidthWrapper>
