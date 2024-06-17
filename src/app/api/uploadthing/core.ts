@@ -3,9 +3,9 @@ import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { UploadThingError } from 'uploadthing/server';
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
-import { getPineconeClient } from '@/lib/picecone';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { PineconeStore } from '@langchain/pinecone';
+import { pinecone } from '@/lib/picecone';
 
 const f = createUploadthing();
 
@@ -33,28 +33,51 @@ export const ourFileRouter = {
 
 			try {
 				const response = await fetch(`https://utfs.io/f/${file.key}`);
+				console.log(`before blob`);
 				const blob = await response.blob();
+
+				console.log(`after blob`);
 
 				const loader = new PDFLoader(blob);
 
+				console.log(`after loader`);
+
 				const pageLevelDocs = await loader.load();
+				console.log('after pagelevel');
 
 				const pageAmt = pageLevelDocs.length;
 
-				//vectorize and index entire document
+				console.log(`before pinecone index`);
 
-				const pinecone = await getPineconeClient();
-				const pineconeIndex = pinecone.Index('docquery');
+				const pineconeIndex = pinecone.index('docquery');
+
+				console.log(`after pinecone index`);
+
+				console.log(`before embeddings`);
 
 				const embeddings = new OpenAIEmbeddings({
 					// openAIApiKey: process.env.OPENAI_API_KEY!,
-					openAIApiKey: 'sk-proj-C8EW2Asz8J9uNOYxewyET3BlbkFJr0Gfv6swrbH52RadabfL',
+					openAIApiKey:
+						'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',
 				});
+
+				console.log(`after embeddings`);
+
+				// await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
+				// 	pineconeIndex,
+				// 	namespace: createdFile.id,
+				// 	textKey: 'text',
+				// });
+
+				console.log(`beofre pinecone store`);
 
 				await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
 					pineconeIndex,
 					namespace: createdFile.id,
+					textKey: 'text',
 				});
+
+				console.log(`after pinecone store`);
 
 				await db.file.update({
 					where: {
@@ -65,6 +88,7 @@ export const ourFileRouter = {
 					},
 				});
 			} catch (error) {
+				console.error(`Process FAILED: ${error}`);
 				await db.file.update({
 					where: {
 						id: createdFile.id,
@@ -73,7 +97,6 @@ export const ourFileRouter = {
 						uploadStatus: 'FAILED',
 					},
 				});
-				console.log(`Process FAILED`);
 			}
 		}),
 } satisfies FileRouter;

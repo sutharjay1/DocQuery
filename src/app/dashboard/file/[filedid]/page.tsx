@@ -19,8 +19,6 @@ const page = async ({ params }: PageProps) => {
 
 	const user = await getUser();
 
-	console.log(`fileid`, filedid);
-
 	if (!user || !user?.id)
 		redirect(`/auth-callback?origin=dashboard/${filedid}`);
 
