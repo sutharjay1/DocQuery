@@ -3,9 +3,9 @@ import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
 import { UploadThingError } from 'uploadthing/server';
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf';
-import { OpenAIEmbeddings } from '@langchain/openai';
-import { PineconeStore } from '@langchain/pinecone';
-import { pinecone } from '@/lib/picecone';
+import { getPineconeClient } from '@/lib/picecone';
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
+import { PineconeStore } from 'langchain/vectorstores/pinecone';
 
 const f = createUploadthing();
 
@@ -49,16 +49,19 @@ export const ourFileRouter = {
 
 				console.log(`before pinecone index`);
 
-				const pineconeIndex = pinecone.index('docquery');
+				const pinecone = await getPineconeClient()
+				const pineconeIndex = pinecone.Index('docquery')
+
+				// const namespace = pineconeIndex.console.log(
+				// 	'inserting vectors into pinecone'
+				// );
 
 				console.log(`after pinecone index`);
 
 				console.log(`before embeddings`);
 
 				const embeddings = new OpenAIEmbeddings({
-					// openAIApiKey: process.env.OPENAI_API_KEY!,
-					openAIApiKey:
-						'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',
+					openAIApiKey: process.env.OPENAI_API_KEY,
 				});
 
 				console.log(`after embeddings`);
@@ -74,7 +77,6 @@ export const ourFileRouter = {
 				await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
 					pineconeIndex,
 					namespace: createdFile.id,
-					textKey: 'text',
 				});
 
 				console.log(`after pinecone store`);
